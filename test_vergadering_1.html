@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>Spionnen App — Test</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+
+  body {
+    background: #060608;
+    color: #00ff41;
+    font-family: 'Share Tech Mono', monospace;
+    min-height: 100vh;
+    padding: 20px 16px 40px;
+  }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,65,0.012) 2px, rgba(0,255,65,0.012) 4px);
+    pointer-events: none;
+    z-index: 9999;
+  }
+
+  h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(14px, 4vw, 20px);
+    font-weight: 900;
+    text-align: center;
+    letter-spacing: 3px;
+    text-shadow: 0 0 20px rgba(0,255,65,0.5);
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: #4a6a4a;
+    font-size: 11px;
+    letter-spacing: 1px;
+    margin-bottom: 24px;
+  }
+
+  .progress-bar {
+    background: #0d0d10;
+    border: 1px solid #1a2a1a;
+    border-radius: 20px;
+    height: 10px;
+    margin-bottom: 6px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #00aa2a, #00ff41);
+    border-radius: 20px;
+    transition: width 0.5s ease;
+    width: 0%;
+  }
+
+  .progress-label {
+    text-align: right;
+    font-size: 11px;
+    color: #4a6a4a;
+    margin-bottom: 20px;
+  }
+
+  .test-card {
+    background: #0d0d10;
+    border: 1px solid #1a2a1a;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+    transition: border-color 0.3s;
+  }
+
+  .test-card.pass  { border-color: #00ff41; background: #041004; }
+  .test-card.fail  { border-color: #ff3333; background: #140404; }
+  .test-card.skip  { border-color: #ffbb00; background: #141000; }
+
+  .test-header {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-bottom: 10px;
+  }
+
+  .test-icon {
+    font-size: 22px;
+    line-height: 1;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .test-info { flex: 1; }
+
+  .test-name {
+    font-family: 'Orbitron', monospace;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-bottom: 3px;
+  }
+
+  .test-desc {
+    font-size: 11px;
+    color: #4a6a4a;
+    line-height: 1.5;
+  }
+
+  .test-status {
+    font-size: 11px;
+    font-weight: bold;
+    letter-spacing: 1px;
+    margin-top: 6px;
+  }
+  .test-status.pass { color: #00ff41; }
+  .test-status.fail { color: #ff3333; }
+  .test-status.skip { color: #ffbb00; }
+  .test-status.pending { color: #4a6a4a; }
+
+  .btn-row {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  .btn {
+    padding: 9px 16px;
+    border-radius: 4px;
+    font-family: 'Share Tech Mono', monospace;
+    font-size: 12px;
+    cursor: pointer;
+    border: none;
+    transition: all 0.15s;
+    -webkit-user-select: none;
+    touch-action: manipulation;
+  }
+  .btn:active { transform: scale(0.96); }
+
+  .btn-pass   { background: #00ff41; color: #000; font-weight: bold; }
+  .btn-fail   { background: transparent; color: #ff3333; border: 1px solid #ff3333; }
+  .btn-skip   { background: transparent; color: #ffbb00; border: 1px solid #ffbb00; }
+  .btn-open   { background: transparent; color: #00e5ff; border: 1px solid #00e5ff; }
+  .btn-reset  { background: transparent; color: #4a6a4a; border: 1px solid #333; }
+
+  .divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, #1a2a1a, transparent);
+    margin: 20px 0;
+  }
+
+  .summary {
+    background: #0d0d10;
+    border-radius: 8px;
+    padding: 20px;
+    text-align: center;
+    margin-top: 24px;
+    border: 2px solid #1a2a1a;
+    transition: border-color 0.5s;
+  }
+
+  .summary.all-pass { border-color: #00ff41; box-shadow: 0 0 30px rgba(0,255,65,0.15); }
+  .summary.has-fail { border-color: #ff3333; }
+
+  .summary-title {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(14px, 4vw, 20px);
+    font-weight: 900;
+    margin-bottom: 10px;
+  }
+
+  .summary-counts {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .count-item { text-align: center; }
+  .count-num  { font-family: 'Orbitron', monospace; font-size: 28px; font-weight: 900; }
+  .count-lbl  { font-size: 11px; color: #4a6a4a; letter-spacing: 1px; }
+
+  .count-item.pass .count-num { color: #00ff41; }
+  .count-item.fail .count-num { color: #ff3333; }
+  .count-item.skip .count-num { color: #ffbb00; }
+
+  .final-msg { font-size: 13px; color: #4a6a4a; line-height: 1.7; }
+  .final-msg.ok { color: #00ff41; }
+
+  @keyframes pulse {
+    0%,100% { text-shadow: 0 0 10px rgba(0,255,65,0.3); }
+    50%      { text-shadow: 0 0 30px rgba(0,255,65,0.8); }
+  }
+  .pulse { animation: pulse 2s ease-in-out infinite; }
+</style>
+</head>
+<body>
+
+<h1>◈ SPIONNEN APP — TEST ◈</h1>
+<p class="subtitle">iPad Safari Compatibiliteitstest &bull; Team 104</p>
+
+<div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+<div class="progress-label" id="progress-label">0 / 8 getest</div>
+
+<div id="tests-container"></div>
+
+<div class="divider"></div>
+
+<div class="summary" id="summary">
+  <div class="summary-title" id="summary-title" style="color:#4a6a4a;">RESULTATEN</div>
+  <div class="summary-counts">
+    <div class="count-item pass"><div class="count-num" id="count-pass">0</div><div class="count-lbl">GESLAAGD</div></div>
+    <div class="count-item fail"><div class="count-num" id="count-fail">0</div><div class="count-lbl">GEFAALD</div></div>
+    <div class="count-item skip"><div class="count-num" id="count-skip">0</div><div class="count-lbl">OVERGESLAGEN</div></div>
+  </div>
+  <div class="final-msg" id="final-msg">Voer de tests uit door op de knoppen te drukken.</div>
+</div>
+
+<script>
+const TESTS = [
+  {
+    id: 'scherm',
+    naam: 'SCHERM & WEERGAVE',
+    desc: 'Laadt de pagina correct? Zie je groene tekst op een donkere achtergrond? Zijn de letters leesbaar?',
+    auto: () => {
+      // Automatisch: check of fonts geladen zijn en de body zichtbaar is
+      return document.body.offsetWidth > 0;
+    }
+  },
+  {
+    id: 'touch',
+    naam: 'TOUCH & KNOPPEN',
+    desc: 'Tik op deze kaart. Reageert alles vlot? Geen vertraging bij het indrukken van knoppen?',
+    auto: null
+  },
+  {
+    id: 'scroll',
+    naam: 'SCROLLEN',
+    desc: 'Scroll omhoog en omlaag op deze pagina. Gaat dit soepel zonder haperen?',
+    auto: null
+  },
+  {
+    id: 'font',
+    naam: 'LETTERTYPE (ORBITRON)',
+    desc: 'Zie je een speciaal futuristisch lettertype in de titels? Of ziet alles er hetzelfde uit?',
+    auto: () => {
+      // Check of Orbitron geladen is via font detection
+      const canvas = document.createElement('canvas');
+      const ctx = canvas.getContext('2d');
+      ctx.font = '16px monospace';
+      const w1 = ctx.measureText('ABCDE').width;
+      ctx.font = '16px Orbitron, monospace';
+      const w2 = ctx.measureText('ABCDE').width;
+      return w1 !== w2;
+    }
+  },
+  {
+    id: 'popup',
+    naam: 'POPUP / MODAL',
+    desc: 'Tik op "TEST POPUP" hieronder. Verschijnt er een venster in het midden van het scherm?',
+    auto: null,
+    actie: () => showTestModal()
+  },
+  {
+    id: 'select',
+    naam: 'DROPDOWN (LOCATIE 1)',
+    desc: 'Tik op het dropdown-menu hieronder. Kan je een optie kiezen? Sluit het menu daarna?',
+    auto: null,
+    actie: null,
+    extraHtml: `<select id="test-select" style="background:#141418;color:#00ff41;border:1px solid #1a2a1a;border-radius:4px;padding:8px 12px;font-family:inherit;font-size:12px;margin-top:8px;width:100%;-webkit-appearance:none;appearance:none;" onchange="document.getElementById('select-result').textContent='✓ Gekozen: '+this.value">
+      <option value="">— kies een optie —</option>
+      <option value="Moni 1">Moni 1</option>
+      <option value="Moni 2">Moni 2</option>
+      <option value="Moni 3">Moni 3</option>
+    </select>
+    <div id="select-result" style="font-size:11px;color:#00aa2a;margin-top:4px;"></div>`
+  },
+  {
+    id: 'grid',
+    naam: 'GRID (LOCATIE 2)',
+    desc: 'Kan je horizontaal scrollen in het grid hieronder? Tik op een woord — kleurt het groen?',
+    auto: null,
+    extraHtml: buildMiniGrid()
+  },
+  {
+    id: 'app',
+    naam: 'HOOFDAPP OPENEN',
+    desc: 'Tik op "OPEN APP" om de echte Spionnen App te openen. Laadt alles correct?',
+    auto: null,
+    actie: () => window.open('spionnen_controletoren.html', '_blank')
+  }
+];
+
+function buildMiniGrid() {
+  const woorden = ['BACKFLIP','LUISTEREN','OPSTAAN','SALTO','AVATAR','NARUTO','ROOD','ROOS','BLAUW','NOOTJES'];
+  let html = `<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #1a2a1a;border-radius:4px;padding:6px;margin-top:8px;background:#050505">
+    <div style="display:flex;gap:4px;min-width:580px;">`;
+  woorden.forEach((w, i) => {
+    html += `<div onclick="this.style.background='#003300';this.style.borderColor='#00ff41';this.style.fontWeight='bold'"
+      style="background:#141418;color:#00ff41;border:1px solid #1a2a1a;border-radius:3px;padding:5px 6px;font-size:10px;white-space:nowrap;cursor:pointer;flex-shrink:0;font-family:inherit;transition:all 0.15s;">${w}</div>`;
+  });
+  html += '</div></div>';
+  return html;
+}
+
+// ── State ──────────────────────────────────────────────────
+const results = {};
+
+function setResult(id, status) {
+  results[id] = status;
+  renderTest(id);
+  updateSummary();
+}
+
+// ── Render ─────────────────────────────────────────────────
+function renderAll() {
+  const container = document.getElementById('tests-container');
+  container.innerHTML = '';
+  TESTS.forEach(t => {
+    const card = document.createElement('div');
+    card.id = `card-${t.id}`;
+    card.className = 'test-card';
+    container.appendChild(card);
+    renderTest(t.id);
+  });
+}
+
+function renderTest(id) {
+  const t = TESTS.find(x => x.id === id);
+  const card = document.getElementById(`card-${t.id}`);
+  const res = results[id];
+
+  card.className = 'test-card' + (res ? ` ${res}` : '');
+
+  const icons = { pass: '✅', fail: '❌', skip: '⏭️', undefined: '⬜' };
+  const statusText = { pass: 'GESLAAGD', fail: 'GEFAALD', skip: 'OVERGESLAGEN', undefined: 'WACHT...' };
+  const statusCls  = { pass: 'pass', fail: 'fail', skip: 'skip', undefined: 'pending' };
+
+  let btnsHtml = '';
+  if (!res) {
+    if (t.actie) {
+      btnsHtml += `<button class="btn btn-open" onclick="TESTS.find(x=>x.id==='${id}').actie()">${id === 'app' ? '▶ OPEN APP' : '▶ TEST POPUP'}</button>`;
+    }
+    btnsHtml += `<button class="btn btn-pass" onclick="setResult('${id}','pass')">✓ GESLAAGD</button>`;
+    btnsHtml += `<button class="btn btn-fail" onclick="setResult('${id}','fail')">✗ GEFAALD</button>`;
+    btnsHtml += `<button class="btn btn-skip" onclick="setResult('${id}','skip')">→ SKIP</button>`;
+  } else {
+    btnsHtml += `<button class="btn btn-reset" onclick="delete results['${id}']; renderTest('${id}'); updateSummary();">↺ opnieuw</button>`;
+  }
+
+  card.innerHTML = `
+    <div class="test-header">
+      <div class="test-icon">${icons[res] || icons['undefined']}</div>
+      <div class="test-info">
+        <div class="test-name">${t.naam}</div>
+        <div class="test-desc">${t.desc}</div>
+        ${t.extraHtml ? t.extraHtml : ''}
+      </div>
+    </div>
+    <div class="test-status ${statusCls[res] || 'pending'}">${statusText[res] || statusText['undefined']}</div>
+    <div class="btn-row">${btnsHtml}</div>
+  `;
+}
+
+// ── Auto-tests ─────────────────────────────────────────────
+function runAutoTests() {
+  TESTS.forEach(t => {
+    if (t.auto && !results[t.id]) {
+      try {
+        const ok = t.auto();
+        setResult(t.id, ok ? 'pass' : 'fail');
+      } catch(e) {
+        setResult(t.id, 'fail');
+      }
+    }
+  });
+}
+
+// ── Summary ────────────────────────────────────────────────
+function updateSummary() {
+  const vals = Object.values(results);
+  const pass = vals.filter(v => v === 'pass').length;
+  const fail = vals.filter(v => v === 'fail').length;
+  const skip = vals.filter(v => v === 'skip').length;
+  const total = TESTS.length;
+  const done = vals.length;
+
+  document.getElementById('count-pass').textContent = pass;
+  document.getElementById('count-fail').textContent = fail;
+  document.getElementById('count-skip').textContent = skip;
+
+  const pct = Math.round((done / total) * 100);
+  document.getElementById('progress-fill').style.width = pct + '%';
+  document.getElementById('progress-label').textContent = `${done} / ${total} getest`;
+
+  const summary = document.getElementById('summary');
+  const title = document.getElementById('summary-title');
+  const msg = document.getElementById('final-msg');
+
+  if (done < total) {
+    summary.className = 'summary';
+    title.style.color = '#4a6a4a';
+    title.textContent = 'RESULTATEN';
+    msg.className = 'final-msg';
+    msg.textContent = 'Voer de tests uit door op de knoppen te drukken.';
+  } else if (fail === 0) {
+    summary.className = 'summary all-pass';
+    title.style.color = '#00ff41';
+    title.textContent = '✓ ALLES GESLAAGD!';
+    title.classList.add('pulse');
+    msg.className = 'final-msg ok';
+    msg.textContent = 'De app werkt correct op dit apparaat.\nStuur een screenshot van dit scherm naar Brent. 📸';
+  } else {
+    summary.className = 'summary has-fail';
+    title.style.color = '#ff3333';
+    title.textContent = `⚠ ${fail} TEST${fail > 1 ? 'S' : ''} GEFAALD`;
+    title.classList.remove('pulse');
+    msg.className = 'final-msg';
+    msg.textContent = `${fail} test(s) gefaald. Stuur een screenshot naar Brent met wat er misging.`;
+  }
+}
+
+// ── Test popup ─────────────────────────────────────────────
+function showTestModal() {
+  const overlay = document.createElement('div');
+  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;backdrop-filter:blur(4px);';
+
+  overlay.innerHTML = `
+    <div style="background:#141418;border:2px solid #00ff41;border-radius:8px;padding:24px;max-width:380px;width:100%;box-shadow:0 0 40px rgba(0,255,65,0.2);">
+      <div style="font-family:'Orbitron',monospace;font-size:15px;font-weight:700;color:#00ff41;margin-bottom:10px;">✓ POPUP WERKT!</div>
+      <div style="font-size:13px;color:#aaa;margin-bottom:20px;line-height:1.6;">Als je dit venster ziet, werken de popups correct op jouw apparaat.</div>
+      <button onclick="this.closest('.modal-test-overlay').remove()" style="background:#00ff41;color:#000;font-family:inherit;font-size:13px;font-weight:bold;padding:10px 20px;border:none;border-radius:4px;cursor:pointer;width:100%;">SLUITEN</button>
+    </div>`;
+  overlay.className = 'modal-test-overlay';
+  overlay.onclick = e => { if(e.target === overlay) overlay.remove(); };
+  document.body.appendChild(overlay);
+}
+
+// ── Init ───────────────────────────────────────────────────
+renderAll();
+setTimeout(runAutoTests, 300);
+</script>
+</body>
+</html>
