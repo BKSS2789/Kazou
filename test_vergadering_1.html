@@ -4,447 +4,917 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <meta name="apple-mobile-web-app-capable" content="yes">
-<title>Spionnen App — Test</title>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>Operation Hasselt</title>
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Orbitron:wght@400;700;900&display=swap');
+:root{
+  --g:#00ff41;--gd:#00aa2a;--c:#00e5ff;--am:#ffbb00;--r:#ff3333;
+  --bg:#060608;--s:#0d0d10;--s2:#141418;--bdr:#1a2a1a;--mu:#4a6a4a;
+  --fm:'Share Tech Mono',monospace;--fd:'Orbitron',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--g);font-family:var(--fm);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;inset:0;background:repeating-linear-gradient(0deg,transparent,transparent 2px,rgba(0,255,65,.013) 2px,rgba(0,255,65,.013) 4px);pointer-events:none;z-index:9999}
 
-  * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+/* INTRO */
+#intro{min-height:100vh;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center}
+.ibadge{font-size:11px;letter-spacing:5px;color:var(--mu);margin-bottom:24px;animation:fu 1s ease .3s both}
+.ititle{font-family:var(--fd);font-size:clamp(32px,10vw,58px);font-weight:900;line-height:1.1;letter-spacing:5px;text-shadow:0 0 50px rgba(0,255,65,.35);margin-bottom:10px;animation:fu 1s ease .5s both}
+.isub{font-family:var(--fd);font-size:clamp(10px,3vw,15px);letter-spacing:8px;color:var(--c);margin-bottom:70px;animation:fu 1s ease .7s both}
+.startbtn{background:transparent;border:2px solid var(--g);color:var(--g);font-family:var(--fd);font-size:clamp(13px,3.5vw,17px);font-weight:700;letter-spacing:5px;padding:22px 56px;border-radius:3px;cursor:pointer;animation:fu 1s ease 1s both,gp 2.5s ease-in-out 2s infinite;-webkit-user-select:none;touch-action:manipulation}
+.startbtn:active{background:var(--g);color:#000;transform:scale(.97)}
+@keyframes gp{0%,100%{box-shadow:0 0 8px rgba(0,255,65,.2)}50%{box-shadow:0 0 28px rgba(0,255,65,.6),0 0 55px rgba(0,255,65,.2)}}
+@keyframes fu{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
 
-  body {
-    background: #060608;
-    color: #00ff41;
-    font-family: 'Share Tech Mono', monospace;
-    min-height: 100vh;
-    padding: 20px 16px 40px;
-  }
+/* BRIEFING */
+#briefing{display:none;min-height:100vh;flex-direction:column;align-items:center;padding:36px 20px 60px;max-width:620px;margin:0 auto}
+.bbadge{font-size:10px;letter-spacing:5px;color:var(--mu);margin-bottom:10px;text-align:center}
+.btitle{font-family:var(--fd);font-size:clamp(15px,4vw,21px);font-weight:700;letter-spacing:3px;text-align:center;margin-bottom:24px}
+.bbox{background:var(--s);border:1px solid var(--bdr);border-radius:6px;padding:20px 18px;width:100%;min-height:260px;font-size:13.5px;line-height:2;white-space:pre-wrap;margin-bottom:16px}
+.cur{display:inline-block;width:8px;height:14px;background:var(--g);vertical-align:middle;margin-left:2px;animation:bl .7s step-end infinite}
+@keyframes bl{0%,100%{opacity:1}50%{opacity:0}}
+.dots{display:flex;gap:8px;justify-content:center;margin-bottom:16px}
+.dot{width:8px;height:8px;border-radius:50%;background:#1a2a1a;transition:all .3s}
+.dot.done{background:var(--gd)}.dot.active{background:var(--c);box-shadow:0 0 6px var(--c)}
+.sbar{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;justify-content:center;width:100%}
+.sbtn{padding:10px 18px;border-radius:4px;font-family:var(--fm);font-size:12px;cursor:pointer;border:1px solid var(--gd);background:transparent;color:var(--g);-webkit-user-select:none;letter-spacing:1px}
+.sbtn:active{background:rgba(0,255,65,.12)}.sbtn.speaking{border-color:var(--c);color:var(--c)}
+#namesec{display:none;width:100%;text-align:center;animation:fu .5s ease both}
+.div{height:1px;background:linear-gradient(90deg,transparent,var(--gd),transparent);margin:20px 0;opacity:.4;width:100%}
+.nlabel{font-family:var(--fd);font-size:12px;letter-spacing:3px;color:var(--c);margin-bottom:14px}
+.ninput{background:var(--s2);border:2px solid var(--gd);border-radius:4px;color:var(--g);font-family:var(--fd);font-size:20px;font-weight:700;letter-spacing:4px;padding:14px 20px;width:100%;max-width:320px;text-align:center;outline:none;margin-bottom:16px;-webkit-appearance:none;transition:border-color .2s,box-shadow .2s}
+.ninput:focus{border-color:var(--g);box-shadow:0 0 20px rgba(0,255,65,.12)}
+.ninput::placeholder{color:var(--mu);font-size:13px;letter-spacing:2px}
+.enterbtn{background:var(--g);color:#000;font-family:var(--fd);font-size:13px;font-weight:700;letter-spacing:4px;padding:15px 44px;border:none;border-radius:4px;cursor:pointer;display:block;margin:0 auto;transition:all .15s;-webkit-user-select:none}
+.enterbtn:active{transform:scale(.97)}.enterbtn:disabled{background:#1a2a1a;color:#2a3a2a;cursor:not-allowed}
 
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background: repeating-linear-gradient(0deg, transparent, transparent 2px, rgba(0,255,65,0.012) 2px, rgba(0,255,65,0.012) 4px);
-    pointer-events: none;
-    z-index: 9999;
-  }
+/* APP */
+#app{display:none}
+header{background:var(--s);border-bottom:2px solid var(--g);padding:13px 20px 9px;text-align:center;position:sticky;top:0;z-index:100;box-shadow:0 0 24px rgba(0,255,65,.08)}
+header h1{font-family:var(--fd);font-size:clamp(12px,3vw,17px);font-weight:900;letter-spacing:3px;text-shadow:0 0 20px rgba(0,255,65,.35)}
+.atag{font-size:11px;color:var(--c);margin-top:3px;letter-spacing:2px}
+.tabs{display:flex;border-bottom:1px solid var(--bdr);background:var(--s);overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tbtn{flex:none;padding:12px 16px;background:none;border:none;border-bottom:3px solid transparent;color:var(--mu);font-family:var(--fm);font-size:11px;letter-spacing:1px;cursor:pointer;white-space:nowrap;transition:all .2s;-webkit-user-select:none}
+.tbtn.active{color:var(--g);border-bottom-color:var(--g)}.tbtn:disabled{color:#1a2a1a;cursor:not-allowed}
+.panel{display:none;padding:20px 16px;max-width:900px;margin:0 auto}.panel.active{display:block}
+.stitle{font-family:var(--fd);font-size:clamp(12px,2.5vw,16px);font-weight:700;color:var(--g);margin-bottom:6px}
+.ssub{color:var(--mu);font-size:12px;margin-bottom:16px;line-height:1.6}
+.pdiv{height:1px;background:linear-gradient(90deg,transparent,var(--gd),transparent);margin:18px 0;opacity:.4}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 16px;border-radius:4px;font-family:var(--fm);font-size:12px;cursor:pointer;border:none;transition:all .15s;-webkit-user-select:none;touch-action:manipulation}
+.btn:active{transform:scale(.97)}
+.btp{background:var(--g);color:#000;font-weight:bold}
+.bts{background:transparent;color:var(--g);border:1px solid var(--gd)}
+.btd{background:transparent;color:var(--r);border:1px solid var(--r)}
+.btl{background:#1a1a1a;color:#333;border:1px solid #222;cursor:not-allowed}
+.brow{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;margin-top:16px}
+.log{background:#050505;border:1px solid var(--gd);border-radius:4px;padding:10px 12px;font-size:12px;height:100px;overflow-y:auto;margin-top:16px;line-height:1.7;-webkit-overflow-scrolling:touch}
+.log .e{color:var(--r)}.log .o{color:var(--g)}.log .w{color:var(--am)}.log .i{color:var(--c)}
 
-  h1 {
-    font-family: 'Orbitron', monospace;
-    font-size: clamp(14px, 4vw, 20px);
-    font-weight: 900;
-    text-align: center;
-    letter-spacing: 3px;
-    text-shadow: 0 0 20px rgba(0,255,65,0.5);
-    margin-bottom: 4px;
-  }
+/* L1 */
+.mhdr{color:var(--c);font-family:var(--fd);font-size:11px;font-weight:700;margin:16px 0 8px;border-left:3px solid var(--c);padding-left:10px}
+.wrow{display:grid;grid-template-columns:1fr auto auto;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--bdr);border-radius:4px;margin-bottom:6px;background:var(--s)}
+.wrow.correct{border-color:var(--g);background:#041004}
+.wrow.wrong{border-color:var(--r);background:#140404}
+.wtxt{font-size:12px;color:var(--g);line-height:1.4}
+.wtxt::before{content:'• ';color:var(--gd)}
+.msel,.wsel{background:var(--s2);color:var(--g);border:1px solid var(--gd);border-radius:4px;padding:6px 8px;font-family:var(--fm);font-size:11px;cursor:pointer;-webkit-appearance:none;min-width:110px}
+.msel:focus,.wsel:focus{outline:none;border-color:var(--g)}
+/* name input next to moni header */
+.mhdr-row{display:flex;align-items:center;gap:10px;margin:16px 0 8px}
+.mhdr-label{color:var(--c);font-family:var(--fd);font-size:11px;font-weight:700;border-left:3px solid var(--c);padding-left:10px;flex:1}
+.mname-in{background:var(--s2);color:var(--am);border:1px solid var(--am);border-radius:4px;padding:5px 8px;font-family:var(--fd);font-size:11px;font-weight:700;letter-spacing:1px;width:130px;outline:none;-webkit-appearance:none;text-align:center}
+.mname-in:focus{border-color:var(--g);color:var(--g)}
+.mname-in::placeholder{color:var(--mu);font-size:10px;letter-spacing:0;font-weight:normal}
 
-  .subtitle {
-    text-align: center;
-    color: #4a6a4a;
-    font-size: 11px;
-    letter-spacing: 1px;
-    margin-bottom: 24px;
-  }
+/* L2 GRID */
+.gwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid var(--bdr);border-radius:6px;padding:8px;background:var(--s);margin-bottom:16px}
+.gtbl{border-collapse:separate;border-spacing:3px;min-width:660px}
+.ghdr{color:var(--mu);font-size:10px;text-align:center;padding:2px 4px;min-width:60px}
+.gcell{background:var(--s2);color:var(--g);border:1px solid #1a2a1a;border-radius:3px;font-family:var(--fm);font-size:10px;padding:5px 3px;text-align:center;cursor:pointer;transition:all .15s;white-space:nowrap;-webkit-user-select:none}
+.gcell:active{background:#0a1a0a}
+.gcell.sel{background:#003300;border:2px solid var(--g);font-weight:bold}
+.gcell.ok{background:#004400;border:2px solid var(--g);font-weight:bold;box-shadow:0 0 8px rgba(0,255,65,.3)}
+.gcell.inactive{cursor:default;opacity:.5}
 
-  .progress-bar {
-    background: #0d0d10;
-    border: 1px solid #1a2a1a;
-    border-radius: 20px;
-    height: 10px;
-    margin-bottom: 6px;
-    overflow: hidden;
-  }
+/* L2 VRAGEN */
+.vcard{border:1px solid #1a2a1a;border-radius:6px;padding:14px;margin-bottom:10px;background:var(--s);transition:border-color .3s}
+.vcard.open{border-color:var(--gd)}.vcard.done{border-color:var(--g);background:#041004}
+.vlabel{color:var(--am);font-size:11px;margin-bottom:6px}
+.vtxt{font-size:13px;margin-bottom:10px;line-height:1.5}
+.vtxt.locked{color:#2a3a2a}
+.vst{font-size:12px;color:var(--mu);margin-top:6px}
+.vst.ok{color:var(--g)}.vst.pend{color:var(--am)}
+.cbtns{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
 
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, #00aa2a, #00ff41);
-    border-radius: 20px;
-    transition: width 0.5s ease;
-    width: 0%;
-  }
+/* Moni name select for Q2/Q5 */
+.moni-check-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.moni-check{display:flex;align-items:center;gap:5px;background:var(--s2);border:1px solid var(--bdr);border-radius:4px;padding:5px 10px;cursor:pointer;font-size:12px;transition:all .15s;-webkit-user-select:none}
+.moni-check.selected{border-color:var(--g);background:#003300;color:var(--g)}
+.moni-check:active{transform:scale(.97)}
 
-  .progress-label {
-    text-align: right;
-    font-size: 11px;
-    color: #4a6a4a;
-    margin-bottom: 20px;
-  }
+/* CODE */
+.codedis{display:flex;gap:4px;justify-content:center;flex-wrap:wrap;margin:16px 0}
+.cdig{width:34px;height:44px;background:var(--s);border:1px solid #1a2a1a;border-radius:4px;display:flex;align-items:center;justify-content:center;font-family:var(--fd);font-size:17px;font-weight:700;color:#2a3a2a;transition:all .3s}
+.cdig.on{color:var(--g);border-color:var(--g);box-shadow:0 0 10px rgba(0,255,65,.2)}
+.csep{width:6px}
+.cst{text-align:center;font-size:12px;color:var(--mu);margin-bottom:12px}
+.cst.done{color:var(--g);font-weight:bold}
 
-  .test-card {
-    background: #0d0d10;
-    border: 1px solid #1a2a1a;
-    border-radius: 8px;
-    padding: 16px;
-    margin-bottom: 12px;
-    transition: border-color 0.3s;
-  }
+/* L3 */
+.bompanel{background:#1a0000;border:2px solid var(--r);border-radius:8px;padding:20px;transition:border-color .5s}
+.bomtitle{font-family:var(--fd);color:var(--am);font-size:11px;margin-bottom:16px;letter-spacing:2px;text-align:center}
+.draadjes{display:flex;gap:16px;justify-content:center;flex-wrap:wrap;margin-bottom:20px;align-items:flex-end}
+.ditem{display:flex;flex-direction:column;align-items:center;gap:8px}
+.dlijn{width:10px;height:70px;border-radius:5px;position:relative}
+.dlijn.cut::after{content:'✂';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:14px;color:rgba(255,255,255,.8)}
+.dlbl{font-size:11px;font-weight:bold;letter-spacing:1px}
+.dbtn{padding:7px 12px;border-radius:4px;font-family:var(--fm);font-size:11px;cursor:pointer;border-width:1px;border-style:solid;background:transparent;-webkit-user-select:none;transition:all .2s}
+.dbtn:active{transform:scale(.95)}.dbtn.cut{opacity:.4;cursor:not-allowed;text-decoration:line-through}
+.dbtn-snip{padding:4px 8px;border-radius:3px;font-family:var(--fm);font-size:10px;cursor:pointer;background:transparent;-webkit-user-select:none;margin-top:2px}
 
-  .test-card.pass  { border-color: #00ff41; background: #041004; }
-  .test-card.fail  { border-color: #ff3333; background: #140404; }
-  .test-card.skip  { border-color: #ffbb00; background: #141000; }
+/* Bom hints */
+.draad-hint{font-size:11px;color:var(--mu);font-style:italic;text-align:center;margin-top:4px;line-height:1.4;max-width:80px}
 
-  .test-header {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    margin-bottom: 10px;
-  }
+/* Final question */
+#final-q{display:none;border:1px solid var(--am);border-radius:6px;padding:16px;background:var(--s);text-align:center;margin-top:16px;animation:fu .4s ease both}
+.fq-title{font-family:var(--fd);color:var(--am);font-size:13px;letter-spacing:2px;margin-bottom:10px}
+.fq-sub{color:var(--mu);font-size:12px;margin-bottom:14px;line-height:1.6}
+.fq-input{background:var(--s2);border:2px solid var(--am);border-radius:4px;color:var(--am);font-family:var(--fd);font-size:24px;font-weight:700;padding:12px;width:100px;text-align:center;outline:none;-webkit-appearance:none;margin-bottom:12px}
+.fq-input:focus{border-color:var(--g);color:var(--g)}
 
-  .test-icon {
-    font-size: 22px;
-    line-height: 1;
-    flex-shrink: 0;
-    margin-top: 2px;
-  }
+<div id="countdown" style="color:var(--r);font-weight:bold;margin-bottom:10px;">
+⏳ Tijd: 20s
+</div>
 
-  .test-info { flex: 1; }
+/* GESLAAGD */
+#panel-geslaagd{text-align:center;padding:50px 20px}
+.gtitle{font-family:var(--fd);font-size:clamp(22px,6vw,38px);font-weight:900;animation:glow 2s ease-in-out infinite;margin-bottom:10px}
+@keyframes glow{0%,100%{text-shadow:0 0 20px rgba(0,255,65,.4)}50%{text-shadow:0 0 60px rgba(0,255,65,.9),0 0 100px rgba(0,255,65,.3)}}
+.gsub{font-family:var(--fd);color:var(--c);font-size:clamp(10px,2vw,14px);letter-spacing:3px;margin-bottom:28px}
+.gtxt{font-size:15px;line-height:2.4}
 
-  .test-name {
-    font-family: 'Orbitron', monospace;
-    font-size: 12px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    margin-bottom: 3px;
-  }
+/* MODAL */
+.moverlay{position:fixed;inset:0;background:rgba(0,0,0,.88);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;backdrop-filter:blur(4px)}
+.mbox{background:var(--s2);border:2px solid var(--g);border-radius:8px;padding:24px;max-width:460px;width:100%;animation:mi .2s ease}
+.mbox.danger{border-color:var(--r)}.mbox.success{box-shadow:0 0 40px rgba(0,255,65,.2)}
+@keyframes mi{from{transform:scale(.9);opacity:0}to{transform:scale(1);opacity:1}}
+.mtitle{font-family:var(--fd);font-size:15px;font-weight:700;margin-bottom:10px;color:var(--g)}
+.mbox.danger .mtitle{color:var(--r)}
+.mbody{font-size:13px;line-height:1.7;color:#aaa;margin-bottom:20px;white-space:pre-line}
+.mbtns{display:flex;gap:10px;justify-content:flex-end}
 
-  .test-desc {
-    font-size: 11px;
-    color: #4a6a4a;
-    line-height: 1.5;
-  }
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-8px)}40%{transform:translateX(8px)}60%{transform:translateX(-5px)}80%{transform:translateX(5px)}}
+.shake{animation:shake .4s ease}
+@keyframes fr{0%,100%{background:var(--bg)}30%,70%{background:#220000}}
+.flash-r{animation:fr .3s ease 4}
+@keyframes fg{0%,100%{background:var(--bg)}50%{background:#002200}}
+.flash-g{animation:fg .6s ease 3}
 
-  .test-status {
-    font-size: 11px;
-    font-weight: bold;
-    letter-spacing: 1px;
-    margin-top: 6px;
-  }
-  .test-status.pass { color: #00ff41; }
-  .test-status.fail { color: #ff3333; }
-  .test-status.skip { color: #ffbb00; }
-  .test-status.pending { color: #4a6a4a; }
-
-  .btn-row {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-top: 10px;
-  }
-
-  .btn {
-    padding: 9px 16px;
-    border-radius: 4px;
-    font-family: 'Share Tech Mono', monospace;
-    font-size: 12px;
-    cursor: pointer;
-    border: none;
-    transition: all 0.15s;
-    -webkit-user-select: none;
-    touch-action: manipulation;
-  }
-  .btn:active { transform: scale(0.96); }
-
-  .btn-pass   { background: #00ff41; color: #000; font-weight: bold; }
-  .btn-fail   { background: transparent; color: #ff3333; border: 1px solid #ff3333; }
-  .btn-skip   { background: transparent; color: #ffbb00; border: 1px solid #ffbb00; }
-  .btn-open   { background: transparent; color: #00e5ff; border: 1px solid #00e5ff; }
-  .btn-reset  { background: transparent; color: #4a6a4a; border: 1px solid #333; }
-
-  .divider {
-    height: 1px;
-    background: linear-gradient(90deg, transparent, #1a2a1a, transparent);
-    margin: 20px 0;
-  }
-
-  .summary {
-    background: #0d0d10;
-    border-radius: 8px;
-    padding: 20px;
-    text-align: center;
-    margin-top: 24px;
-    border: 2px solid #1a2a1a;
-    transition: border-color 0.5s;
-  }
-
-  .summary.all-pass { border-color: #00ff41; box-shadow: 0 0 30px rgba(0,255,65,0.15); }
-  .summary.has-fail { border-color: #ff3333; }
-
-  .summary-title {
-    font-family: 'Orbitron', monospace;
-    font-size: clamp(14px, 4vw, 20px);
-    font-weight: 900;
-    margin-bottom: 10px;
-  }
-
-  .summary-counts {
-    display: flex;
-    justify-content: center;
-    gap: 24px;
-    margin-bottom: 16px;
-    flex-wrap: wrap;
-  }
-
-  .count-item { text-align: center; }
-  .count-num  { font-family: 'Orbitron', monospace; font-size: 28px; font-weight: 900; }
-  .count-lbl  { font-size: 11px; color: #4a6a4a; letter-spacing: 1px; }
-
-  .count-item.pass .count-num { color: #00ff41; }
-  .count-item.fail .count-num { color: #ff3333; }
-  .count-item.skip .count-num { color: #ffbb00; }
-
-  .final-msg { font-size: 13px; color: #4a6a4a; line-height: 1.7; }
-  .final-msg.ok { color: #00ff41; }
-
-  @keyframes pulse {
-    0%,100% { text-shadow: 0 0 10px rgba(0,255,65,0.3); }
-    50%      { text-shadow: 0 0 30px rgba(0,255,65,0.8); }
-  }
-  .pulse { animation: pulse 2s ease-in-out infinite; }
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--gd);border-radius:2px}
 </style>
 </head>
 <body>
 
-<h1>◈ SPIONNEN APP — TEST ◈</h1>
-<p class="subtitle">iPad Safari Compatibiliteitstest &bull; Team 104</p>
+<!-- INTRO -->
+<div id="intro">
+  <div class="ibadge">◈ CLASSIFIED ◈</div>
+  <div class="ititle">OPERATION<br>HASSELT</div>
+  <div class="isub">CONTROLETOREN</div>
+  <button class="startbtn" onclick="startBriefing()">▶&nbsp;&nbsp;START MISSIE</button>
+</div>
 
-<div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
-<div class="progress-label" id="progress-label">0 / 8 getest</div>
-
-<div id="tests-container"></div>
-
-<div class="divider"></div>
-
-<div class="summary" id="summary">
-  <div class="summary-title" id="summary-title" style="color:#4a6a4a;">RESULTATEN</div>
-  <div class="summary-counts">
-    <div class="count-item pass"><div class="count-num" id="count-pass">0</div><div class="count-lbl">GESLAAGD</div></div>
-    <div class="count-item fail"><div class="count-num" id="count-fail">0</div><div class="count-lbl">GEFAALD</div></div>
-    <div class="count-item skip"><div class="count-num" id="count-skip">0</div><div class="count-lbl">OVERGESLAGEN</div></div>
+<!-- BRIEFING -->
+<div id="briefing">
+  <div class="bbadge">◈ GEHEIME BRIEFING ◈</div>
+  <div class="btitle">MISSION BRIEFING</div>
+  <div class="dots" id="dots"></div>
+  <div class="bbox"><span id="bout"></span><span class="cur" id="cur"></span></div>
+  <div class="sbar">
+    <button class="sbtn" id="spkbtn" onclick="toggleSpeech()">🔊 VOORLEZEN</button>
+    <button class="sbtn" onclick="skipBriefing()">⏭ OVERSLAAN</button>
   </div>
-  <div class="final-msg" id="final-msg">Voer de tests uit door op de knoppen te drukken.</div>
+  <div id="namesec">
+    <div class="div"></div>
+    <div class="nlabel">IDENTIFICEER JEZELF — AGENT</div>
+    <input class="ninput" id="agname" type="text" placeholder="Jouw naam..." maxlength="24"
+      autocomplete="off" autocorrect="off" spellcheck="false"
+      oninput="checkName()" onkeydown="if(event.key==='Enter')enterApp()">
+    <button class="enterbtn" id="enterbtn" onclick="enterApp()" disabled>BEVESTIG IDENTITEIT →</button>
+  </div>
+</div>
+
+<!-- APP -->
+<div id="app">
+  <header>
+    <h1>◈ OPERATION HASSELT ◈</h1>
+    <div class="atag" id="atag"></div>
+  </header>
+  <nav class="tabs">
+    <button class="tbtn active" id="tab-l1" onclick="sw('l1')">📍 LOCATIE 1</button>
+    <button class="tbtn" id="tab-l2" onclick="sw('l2')" disabled>📍 LOCATIE 2</button>
+    <button class="tbtn" id="tab-l3" onclick="sw('l3')" disabled>📍 LOCATIE 3</button>
+    <button class="tbtn" id="tab-fin" onclick="sw('fin')" disabled>🎉 GESLAAGD</button>
+  </nav>
+
+  <!-- LOCATIE 1 -->
+  <div class="panel active" id="panel-l1">
+    <div class="stitle">📍 LOCATIE 1 — PARKING JAPANSE TUIN</div>
+    <div class="ssub">
+      Er zijn 5 enveloppen verstopt op de parking. Elke moni belt jou en vertelt één weetje.
+      Vul naast elke MONI de naam in van wie je denkt dat het is. Selecteer bij elk weetje het juiste antwoord.
+      Als alle 5 moni's correct zijn gekoppeld → Locatie 2 vrijgespeeld.
+      <br><br>
+      <span style="color:var(--am)">📍 Locaties: Slagboom · Rondpunt · Parkingrij 1 (Hollandse Audi) · Ingang · Brandweg</span>
+    </div>
+    <div class="pdiv"></div>
+    <div id="l1-container"></div>
+    <div class="pdiv"></div>
+    <div class="brow">
+      <button class="btn btp" onclick="checkL1()">✔ KOPPELING BEVESTIGEN</button>
+      <button class="btn bts" onclick="resetL1()">↺ RESET</button>
+    </div>
+    <div class="log" id="log1"><span class="i">>> LOCATIE 1 ACTIEF — wacht op telefoontjes...</span><br></div>
+  </div>
+
+  <!-- LOCATIE 2 -->
+  <div class="panel" id="panel-l2">
+    <div class="stitle">📍 LOCATIE 2 — KAPERMOLENPARK</div>
+    <div class="ssub">Voer per opdracht de moni's uit. Na elke opdracht wordt een weetje vrijgespeeld.
+    Voor weetjes 1, 3 en 4: duid het antwoord aan in het grid.
+    Voor weetjes 2 en 5: duid de moni('s) aan die het antwoord zijn.
+    De coördinaten + moni-nummers vormen samen de 10-cijferige code.</div>
+    <div class="pdiv"></div>
+    <div class="stitle" style="font-size:11px;margin-bottom:8px">ANTWOORDGRID</div>
+    <div class="gwrap"><table class="gtbl" id="gtbl"></table></div>
+    <div class="pdiv"></div>
+    <div class="stitle" style="font-size:11px;margin-bottom:8px">OPDRACHTEN & WEETJES</div>
+    <div id="l2-container"></div>
+    <div class="pdiv"></div>
+    <div class="stitle" style="font-size:11px;text-align:center;margin-bottom:8px">LIVE CODE</div>
+    <div class="codedis" id="codedis"></div>
+    <div class="cst" id="cst">0 / 5 weetjes ingevuld</div>
+    <div class="brow">
+      <button class="btn btp" onclick="revealCode()">🔑 ONTHUL LOCATIE → LOCATIE 3</button>
+    </div>
+    <div class="log" id="log2"><span class="i">>> LOCATIE 2 ACTIEF</span><br></div>
+  </div>
+
+  <!-- LOCATIE 3 -->
+  <div class="panel" id="panel-l3">
+    <div class="stitle" style="color:var(--r)">📍 LOCATIE 3 — VOLG HOOFDSPION | BOM ONTMANTELING</div>
+    <div class="ssub">De VV leest elk draadje-weetje voor. De juiste persoon knipt het draadje door.
+    Als alle 4 draden zijn doorgeknipt → klik op BOM ONTMANTELD.</div>
+    <div class="pdiv"></div>
+    <div class="bompanel" id="bompanel">
+      <div class="bomtitle">⚡ DRADEN ONTMANTELING — lees elk weetje voor en laat de juiste persoon knippen</div>
+      <div class="draadjes" id="draadjes"></div>
+      <div id="ontmantel-btn-wrap" style="text-align:center">
+        <button class="btn bts" id="ontbtn" onclick="ontmantelBom()" disabled style="opacity:.3">💣 BOM ONTMANTELD</button>
+      </div>
+    </div>
+    <div id="final-q">
+      <div class="fq-title">🔐 FINALE VERIFICATIE</div>
+      <div class="fq-sub">Tel het totale aantal broers en zussen van alle moni's bij elkaar op.<br>
+      Voer het getal in om de missie te voltooien.</div>
+      <input class="fq-input" id="fq-input" type="number" min="0" max="30" placeholder="0"
+        oninput="checkFinalQ()" onkeydown="if(event.key==='Enter')submitFinalQ()">
+      <br>
+      <button class="btn btp" id="fq-submit" onclick="submitFinalQ()" disabled>✔ BEVESTIGEN</button>
+    </div>
+    <div class="log" id="log3"><span class="i">>> LOCATIE 3 ACTIEF — BOM GEDETECTEERD</span><br></div>
+  </div>
+
+  <!-- GESLAAGD -->
+  <div class="panel" id="panel-fin">
+    <div class="gtitle">🎉 MISSIE VOLBRACHT!</div>
+    <div class="gsub">OPERATION HASSELT — GESLAAGD</div>
+    <div class="pdiv" style="max-width:260px;margin:0 auto 24px"></div>
+    <div class="gtxt" id="gtxt">Alle locaties vrijgespeeld.<br>De vakantie gaat fantastisch worden! 🚀</div>
+  </div>
+</div>
+
+<!-- MODAL -->
+<div class="moverlay" id="movl" style="display:none" onclick="mclose(event)">
+  <div class="mbox" id="mbox">
+    <div class="mtitle" id="mtitle"></div>
+    <div class="mbody" id="mbody"></div>
+    <div class="mbtns" id="mbtns"></div>
+  </div>
 </div>
 
 <script>
-const TESTS = [
+// ══════════════════════════════════════════════════════════
+// DATA
+// ══════════════════════════════════════════════════════════
+
+// Moni 1=Forms4, Moni 2=Forms5, Moni 3=Forms2, Moni 4=Forms3, Moni 5=Forms1
+const MONIS = ['Moni 1','Moni 2','Moni 3','Moni 4','Moni 5'];
+
+// ─── LOCATIE 1 ────────────────────────────────────────────
+// Each moni has 3 weetjes: {tekst, options[], correct}
+const L1_DATA = [
+  { // Moni 1: nootjes, slaap ja, dansend bewegen
+    weetjes:[
+      {tekst:'Favoriete snack op kamp',                   opts:['nootjes','chips','koeken','fruit'],                  correct:'nootjes'},
+      {tekst:'Slaap je graag?',                            opts:['ja, heerlijk!','gaat wel','liever niet'],           correct:'ja, heerlijk!'},
+      {tekst:'Liever zingend praten of dansend bewegen?', opts:['zingend praten','dansend bewegen'],                  correct:'dansend bewegen'},
+    ]
+  },
+  { // Moni 2: croque, FC kampioenen, hawaii nee
+    weetjes:[
+      {tekst:'Favoriete snack op kamp',                   opts:['croque','pistolet','wrap','sandwich'],               correct:'croque'},
+      {tekst:'Film/serie volledig opnieuw kijken',        opts:['FC de Kampioenen','Studio 100','Temptation Island','The Voice'], correct:'FC de Kampioenen'},
+      {tekst:'Hawaï pizza = echte pizza?',                opts:['ja, absoluut','nee, nooit'],                         correct:'nee, nooit'},
+    ]
+  },
+  { // Moni 3: Gilmore Girls, mensen op gemak, hawaii ja, 1 zus
+    weetjes:[
+      {tekst:'Film/serie volledig opnieuw kijken',        opts:["Gilmore Girls","Grey's Anatomy","Friends","Desperate Housewives"], correct:'Gilmore Girls'},
+      {tekst:'Verborgen talent',                          opts:['mensen op hun gemak stellen','snel typen','origami vouwen','perfect fluiten'], correct:'mensen op hun gemak stellen'},
+      {tekst:'Hawaï pizza = echte pizza?',                opts:['ja, absoluut','nee, nooit'],                         correct:'ja, absoluut'},
+    ]
+  },
+  { // Moni 4: 1 broers/zussen, zingend praten, gemakkelijk opstaan
+    weetjes:[
+      {tekst:'Aantal broers/zussen',                      opts:['0','1','2','3','4'],                                 correct:'1'},
+      {tekst:'Liever zingend praten of dansend bewegen?', opts:['zingend praten','dansend bewegen'],                  correct:'zingend praten'},
+      {tekst:'Verborgen talent',                          opts:['gemakkelijk opstaan','snel rekenen','foutloos spellen','navigeren op gevoel'], correct:'gemakkelijk opstaan'},
+    ]
+  },
+  { // Moni 5: slaap soort van, boos bij slaaptekort ja, 1 broer/zus
+    weetjes:[
+      {tekst:'Slaap je graag?',                           opts:['soort van, hangt af','altijd laat wakker','kan overal slapen','vroeg op'], correct:'soort van, hangt af'},
+      {tekst:'Word je vlug boos als je slecht hebt geslapen?', opts:['ja, zeker','nee hoor','beetje chagrijnig'],    correct:'ja, zeker'},
+      {tekst:'Aantal broers/zussen',                      opts:['1','2','3','4'],                                     correct:'1'},
+    ]
+  }
+];
+// ─── LOCATIE 2 ────────────────────────────────────────────
+// Grid: 5 rows × 10 cols
+// Answer words: WERELDREIS(r2,c3), SALTO(r3,c5), BLAUW(r4,c2)
+// Q2/Q5 use moni numbers instead of grid coords
+const GRID = [
+  ['SPONTAAN','UITWISSELING','AVATAR','NARUTO','CROQUE','TALENT','SLAAP','ROOD','PIZZA','KAMP'],
+  ['REIZEN',  'HAWAÏ',      'WERELDREIS','GILMORE','DANSEN','BROERS','ZINGEN','UITWISSELING','SNACK','MISSIE'],
+  ['HARRY',   'POTTER',     'IJSJES',  'ROOS',   'SALTO', 'NARUTO','BLAUW', 'BACKFLIP',  'HUIS',  'DOEL'],
+  ['SPION',   'BLAUW',      'KAAS',    'SPONTAAN','GROEN','STUURMAN','FEEDBACK','CODE',  'TALENT','VRIENDEN'],
+  ['VAKANTIE','KAMPVUUR',   'ZINGEN',  'SNACK',   'HOND', 'KAT',   'GROEP', 'SLAAP',    'FILM',  'GEHEIM']
+];
+
+// For Q2/Q5: which NEW moni numbers share the answer
+// Q2 spontaan: orig(2,4) = new Moni3 + Moni1 → [1,3] (0-indexed: [0,2])
+// Q5 uitwisseling: orig(2,3) = new Moni3 + Moni4 → [3,4] (0-indexed: [2,3])
+const L2_VRAGEN = [
   {
-    id: 'scherm',
-    naam: 'SCHERM & WEERGAVE',
-    desc: 'Laadt de pagina correct? Zie je groene tekst op een donkere achtergrond? Zijn de letters leesbaar?',
-    auto: () => {
-      // Automatisch: check of fonts geladen zijn en de body zichtbaar is
-      return document.body.offsetWidth > 0;
-    }
+    opdracht:'Opdracht 1 — Zet je handen 50 cm uit elkaar',
+    tekst:'Had je 10 miljoen, wat zou jij dan doen?',
+    type:'grid',  // click word in grid
+    antwoord:'WERELDREIS', rij:2, kolom:3,  // 1-based
+    hint:'Moni 2 & 5 antwoordden: wereldreis maken',
+    codeContrib: ()=> '23'
   },
   {
-    id: 'touch',
-    naam: 'TOUCH & KNOPPEN',
-    desc: 'Tik op deze kaart. Reageert alles vlot? Geen vertraging bij het indrukken van knoppen?',
-    auto: null
+    opdracht:'Opdracht 2 — Loop over de stenen achterwaarts',
+    tekst:'Spontaan is mijn 2de naam — welke moni\'s zijn dit?',
+    type:'monisel',  // select moni names
+    moniIdxs:[0,2],  // Moni 1 (idx0) + Moni 3 (idx2)
+    hint:'Moni 1 & 3 zijn spontaan',
+    codeContrib: (sel)=> sel.sort((a,b)=>a-b).map(i=>i+1).join('')
   },
   {
-    id: 'scroll',
-    naam: 'SCROLLEN',
-    desc: 'Scroll omhoog en omlaag op deze pagina. Gaat dit soepel zonder haperen?',
-    auto: null
+    opdracht:'Opdracht 3 — Doe haasje over een bepaalde afstand',
+    tekst:'Wat is het verborgen talent van 2 moni's?',
+    type:'grid',
+    antwoord:'SALTO', rij:3, kolom:5,
+    hint:'Moni 1 & 5 hebben een salto als verborgen talent',
+    codeContrib: ()=> '35'
   },
   {
-    id: 'font',
-    naam: 'LETTERTYPE (ORBITRON)',
-    desc: 'Zie je een speciaal futuristisch lettertype in de titels? Of ziet alles er hetzelfde uit?',
-    auto: () => {
-      // Check of Orbitron geladen is via font detection
-      const canvas = document.createElement('canvas');
-      const ctx = canvas.getContext('2d');
-      ctx.font = '16px monospace';
-      const w1 = ctx.measureText('ABCDE').width;
-      ctx.font = '16px Orbitron, monospace';
-      const w2 = ctx.measureText('ABCDE').width;
-      return w1 !== w2;
-    }
+    opdracht:'Opdracht 4 — Vind iets in je lievelingskleur',
+    tekst:'Wat is de lievelingskleur van 2 moni's',
+    type:'grid',
+    antwoord:'BLAUW', rij:4, kolom:2,
+    hint:'Moni 2 & 4 hebben blauw als lievelingskleur',
+    codeContrib: ()=> '42'
   },
   {
-    id: 'popup',
-    naam: 'POPUP / MODAL',
-    desc: 'Tik op "TEST POPUP" hieronder. Verschijnt er een venster in het midden van het scherm?',
-    auto: null,
-    actie: () => showTestModal()
-  },
-  {
-    id: 'select',
-    naam: 'DROPDOWN (LOCATIE 1)',
-    desc: 'Tik op het dropdown-menu hieronder. Kan je een optie kiezen? Sluit het menu daarna?',
-    auto: null,
-    actie: null,
-    extraHtml: `<select id="test-select" style="background:#141418;color:#00ff41;border:1px solid #1a2a1a;border-radius:4px;padding:8px 12px;font-family:inherit;font-size:12px;margin-top:8px;width:100%;-webkit-appearance:none;appearance:none;" onchange="document.getElementById('select-result').textContent='✓ Gekozen: '+this.value">
-      <option value="">— kies een optie —</option>
-      <option value="Moni 1">Moni 1</option>
-      <option value="Moni 2">Moni 2</option>
-      <option value="Moni 3">Moni 3</option>
-    </select>
-    <div id="select-result" style="font-size:11px;color:#00aa2a;margin-top:4px;"></div>`
-  },
-  {
-    id: 'grid',
-    naam: 'GRID (LOCATIE 2)',
-    desc: 'Kan je horizontaal scrollen in het grid hieronder? Tik op een woord — kleurt het groen?',
-    auto: null,
-    extraHtml: buildMiniGrid()
-  },
-  {
-    id: 'app',
-    naam: 'HOOFDAPP OPENEN',
-    desc: 'Tik op "OPEN APP" om de echte Spionnen App te openen. Laadt alles correct?',
-    auto: null,
-    actie: () => window.open('spionnen_controletoren.html', '_blank')
+    opdracht:'Opdracht 5 — Placeer een leuk dansje',
+    tekst:'Ik ben al op uitwisseling geweest — welke moni\'s?',
+    type:'monisel',
+    moniIdxs:[2,3],  // Moni 3 (idx2) + Moni 4 (idx3)
+    hint:'Moni 3 & 4 zijn al op uitwisseling geweest',
+    codeContrib: (sel)=> sel.sort((a,b)=>a-b).map(i=>i+1).join('')
   }
 ];
 
-function buildMiniGrid() {
-  const woorden = ['BACKFLIP','LUISTEREN','OPSTAAN','SALTO','AVATAR','NARUTO','ROOD','ROOS','BLAUW','NOOTJES'];
-  let html = `<div style="overflow-x:auto;-webkit-overflow-scrolling:touch;border:1px solid #1a2a1a;border-radius:4px;padding:6px;margin-top:8px;background:#050505">
-    <div style="display:flex;gap:4px;min-width:580px;">`;
-  woorden.forEach((w, i) => {
-    html += `<div onclick="this.style.background='#003300';this.style.borderColor='#00ff41';this.style.fontWeight='bold'"
-      style="background:#141418;color:#00ff41;border:1px solid #1a2a1a;border-radius:3px;padding:5px 6px;font-size:10px;white-space:nowrap;cursor:pointer;flex-shrink:0;font-family:inherit;transition:all 0.15s;">${w}</div>`;
-  });
-  html += '</div></div>';
-  return html;
-}
-
-// ── State ──────────────────────────────────────────────────
-const results = {};
-
-function setResult(id, status) {
-  results[id] = status;
-  renderTest(id);
-  updateSummary();
-}
-
-// ── Render ─────────────────────────────────────────────────
-function renderAll() {
-  const container = document.getElementById('tests-container');
-  container.innerHTML = '';
-  TESTS.forEach(t => {
-    const card = document.createElement('div');
-    card.id = `card-${t.id}`;
-    card.className = 'test-card';
-    container.appendChild(card);
-    renderTest(t.id);
-  });
-}
-
-function renderTest(id) {
-  const t = TESTS.find(x => x.id === id);
-  const card = document.getElementById(`card-${t.id}`);
-  const res = results[id];
-
-  card.className = 'test-card' + (res ? ` ${res}` : '');
-
-  const icons = { pass: '✅', fail: '❌', skip: '⏭️', undefined: '⬜' };
-  const statusText = { pass: 'GESLAAGD', fail: 'GEFAALD', skip: 'OVERGESLAGEN', undefined: 'WACHT...' };
-  const statusCls  = { pass: 'pass', fail: 'fail', skip: 'skip', undefined: 'pending' };
-
-  let btnsHtml = '';
-  if (!res) {
-    if (t.actie) {
-      btnsHtml += `<button class="btn btn-open" onclick="TESTS.find(x=>x.id==='${id}').actie()">${id === 'app' ? '▶ OPEN APP' : '▶ TEST POPUP'}</button>`;
-    }
-    btnsHtml += `<button class="btn btn-pass" onclick="setResult('${id}','pass')">✓ GESLAAGD</button>`;
-    btnsHtml += `<button class="btn btn-fail" onclick="setResult('${id}','fail')">✗ GEFAALD</button>`;
-    btnsHtml += `<button class="btn btn-skip" onclick="setResult('${id}','skip')">→ SKIP</button>`;
-  } else {
-    btnsHtml += `<button class="btn btn-reset" onclick="delete results['${id}']; renderTest('${id}'); updateSummary();">↺ opnieuw</button>`;
+// ─── LOCATIE 3 ────────────────────────────────────────────
+const DRADEN = [
+  {
+    kleur:'ROOD', hex:'#cc2200',
+    naam:'De Observeerder',
+    weetje:'"Zoek de spion die liever op de achtergrond opereert als stuurman/vrouw, in plaats van de groep luidruchtig te trekken."',
+    antwoord:'Moni 4'
+  },
+  {
+    kleur:'BLAUW', hex:'#0055cc',
+    naam:'De Groeiende Agent',
+    weetje:'"Deze spion stelt zichzelf deze vakantie als doel om uit de schaduw te treden en meer initiatief te durven nemen."',
+    antwoord:'Moni 3'
+  },
+  {
+    kleur:'GEEL', hex:'#ccaa00',
+    naam:'De Sfeermaker',
+    weetje:'"Voor deze persoon is de missie pas geslaagd als iedereen zich goed voelt en de groep samen onvergetelijke herinneringen maakt."',
+    antwoord:'Moni 3'
+  },
+  {
+    kleur:'GROEN', hex:'#007722',
+    naam:'De Professional',
+    weetje:'"Deze spion verwacht van het team een hoge mate van verantwoordelijkheid, zodat de focus volledig op de doelgroep kan blijven liggen."',
+    antwoord:'Moni 4'
   }
+];
 
-  card.innerHTML = `
-    <div class="test-header">
-      <div class="test-icon">${icons[res] || icons['undefined']}</div>
-      <div class="test-info">
-        <div class="test-name">${t.naam}</div>
-        <div class="test-desc">${t.desc}</div>
-        ${t.extraHtml ? t.extraHtml : ''}
-      </div>
-    </div>
-    <div class="test-status ${statusCls[res] || 'pending'}">${statusText[res] || statusText['undefined']}</div>
-    <div class="btn-row">${btnsHtml}</div>
-  `;
+// Correct total broers/zussen: Moni1=1, Moni2=1, Moni3=0, Moni4=5, Moni5=1 → total=8
+// But broers/zussen data is unclear from forms → we validate against doc4 info
+// Moni4 has 5 per doc, Moni5 has 1 per forms → others unclear → let VV decide
+// We'll make the answer configurable but default to 8
+const CORRECT_TOTAL_BROERS = 9;
+
+// ══════════════════════════════════════════════════════════
+// BRIEFING
+// ══════════════════════════════════════════════════════════
+const BRIEF=[
+  {t:'Welkom, Agent.',dot:true},{t:''},
+  {t:'Jij bent de CONTROLETOREN van Operation Hasselt.'},{t:'Terwijl de spionnen op het terrein opereren,'},{t:'begeleid jij hen op afstand via telefoon.'},{t:''},
+  {t:'Je taak bestaat uit drie fases:',dot:true},{t:''},
+  {t:'FASE 1 — PARKING JAPANSE TUIN:'},{t:'Spionnen bellen jou en vertellen een weetje.'},{t:'Koppel elk weetje aan de juiste moni.'},{t:''},
+  {t:'Succes, Agent. De missie begint nu.',dot:true}
+];
+
+const synth=window.speechSynthesis;let speaking=false;
+function spktxt(){return BRIEF.filter(l=>l.t.trim()).map(l=>l.t).join('. ');}
+function doSpeak(){
+  if(!('speechSynthesis'in window))return;synth.cancel();
+  const u=new SpeechSynthesisUtterance(spktxt());u.lang='nl-NL';u.rate=.86;u.pitch=.82;
+  const vs=synth.getVoices();const v=vs.find(v=>v.lang.startsWith('nl'))||vs[0];if(v)u.voice=v;
+  u.onstart=()=>{speaking=true;const b=document.getElementById('spkbtn');if(b){b.textContent='⏹ STOPPEN';b.classList.add('speaking');}};
+  u.onend=u.onerror=()=>{speaking=false;const b=document.getElementById('spkbtn');if(b){b.textContent='🔊 OPNIEUW';b.classList.remove('speaking');}};
+  synth.speak(u);
+}
+function toggleSpeech(){if(speaking){synth.cancel();speaking=false;document.getElementById('spkbtn').textContent='🔊 OPNIEUW';document.getElementById('spkbtn').classList.remove('speaking');}else doSpeak();}
+
+let dotIdx=0;
+function startBriefing(){
+  document.getElementById('intro').style.display='none';
+  const b=document.getElementById('briefing');b.style.display='flex';b.style.flexDirection='column';
+  const dc=document.getElementById('dots');const cnt=BRIEF.filter(l=>l.dot).length;
+  for(let i=0;i<cnt;i++){const d=document.createElement('div');d.className='dot';d.id='dot'+i;dc.appendChild(d);}
+  typeAll(0,()=>{document.getElementById('cur').style.display='none';document.getElementById('namesec').style.display='block';});
+  setTimeout(()=>doSpeak(),700);
+}
+function typeAll(i,done){
+  if(i>=BRIEF.length){done();return;}
+  const line=BRIEF[i];
+  if(line.dot){const d=document.getElementById('dot'+dotIdx);if(d)d.className='dot active';if(dotIdx>0){const p=document.getElementById('dot'+(dotIdx-1));if(p)p.className='dot done';}dotIdx++;}
+  const out=document.getElementById('bout');
+  if(!line.t){out.appendChild(document.createTextNode('\n'));setTimeout(()=>typeAll(i+1,done),60);return;}
+  const sp=document.createElement('span');out.appendChild(sp);let ci=0;
+  const spd=line.t.startsWith('FASE')||line.t.startsWith('Welkom')||line.t.startsWith('Succes')?45:20;
+  (function tick(){if(ci<line.t.length){sp.textContent+=line.t[ci++];setTimeout(tick,spd);}else{out.appendChild(document.createTextNode('\n'));setTimeout(()=>typeAll(i+1,done),line.t.startsWith('FASE')?180:50);}})();
+}
+function skipBriefing(){
+  synth&&synth.cancel();
+  const out=document.getElementById('bout');out.innerHTML='';
+  BRIEF.forEach(l=>{if(l.t){const s=document.createElement('span');s.textContent=l.t;out.appendChild(s);}out.appendChild(document.createTextNode('\n'));});
+  document.getElementById('cur').style.display='none';document.getElementById('namesec').style.display='block';
+  document.querySelectorAll('.dot').forEach(d=>d.className='dot done');
+}
+function checkName(){document.getElementById('enterbtn').disabled=document.getElementById('agname').value.trim().length<2;}
+function enterApp(){
+  const naam=document.getElementById('agname').value.trim();if(naam.length<2)return;
+  synth&&synth.cancel();
+  document.getElementById('briefing').style.display='none';
+  document.getElementById('app').style.display='block';
+  document.getElementById('atag').textContent='AGENT: '+naam.toUpperCase();
+  document.getElementById('gtxt').innerHTML=`Agent ${naam}, missie geslaagd!<br>Operation Hasselt is een succes!<br>De vakantie gaat fantastisch worden! 🚀`;
+  buildL1();buildGrid();buildL2();buildCode();buildDraden();
+}
+if('speechSynthesis'in window)window.addEventListener('touchstart',()=>synth.getVoices(),{once:true});
+
+// ══════════════════════════════════════════════════════════
+// TABS / MODAL / LOG
+// ══════════════════════════════════════════════════════════
+function sw(t){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tbtn').forEach(b=>b.classList.remove('active'));document.getElementById('panel-'+t).classList.add('active');document.getElementById('tab-'+t).classList.add('active');}
+function openTab(t){document.getElementById('tab-'+t).disabled=false;sw(t);}
+let mres=null;
+function modal(title,body,type,btns=[{l:'OK',v:true,p:true}]){
+  return new Promise(res=>{
+    mres=res;document.getElementById('mtitle').textContent=title;document.getElementById('mbody').textContent=body;
+    document.getElementById('mbox').className='mbox'+(type==='danger'?' danger':type==='success'?' success':'');
+    const b=document.getElementById('mbtns');b.innerHTML='';
+    btns.forEach(btn=>{const el=document.createElement('button');el.className='btn '+(btn.p?'btp':'bts');el.textContent=btn.l;el.onclick=()=>{document.getElementById('movl').style.display='none';res(btn.v);};b.appendChild(el);});
+    document.getElementById('movl').style.display='flex';
+  });
+}
+function mclose(e){if(e.target===document.getElementById('movl')){document.getElementById('movl').style.display='none';if(mres)mres(false);}}
+function log(id,msg,cls=''){const el=document.getElementById(id);el.innerHTML+=`<span class="${cls}">${msg}</span><br>`;el.scrollTop=el.scrollHeight;}
+function shake(id){const el=document.getElementById(id);el.classList.add('shake');setTimeout(()=>el.classList.remove('shake'),500);}
+
+// ══════════════════════════════════════════════════════════
+// LOCATIE 1
+// ══════════════════════════════════════════════════════════
+const l1st={names:['','','','',''],sels:{}};
+
+function buildL1(){
+  const c=document.getElementById('l1-container');c.innerHTML='';
+  L1_DATA.forEach((moni,mi)=>{
+    // Header row with name input
+    const hrow=document.createElement('div');hrow.className='mhdr-row';
+    const lbl=document.createElement('div');lbl.className='mhdr-label';lbl.textContent='● MONI '+(mi+1);
+    const nin=document.createElement('input');nin.className='mname-in';nin.type='text';nin.maxLength=20;
+    nin.placeholder='Naam invullen...';nin.value=l1st.names[mi]||'';nin.autocomplete='off';nin.autocorrect='off';nin.spellcheck=false;
+    nin.oninput=()=>{l1st.names[mi]=nin.value;};
+    hrow.appendChild(lbl);hrow.appendChild(nin);c.appendChild(hrow);
+
+    // Weetjes
+    moni.weetjes.forEach((w,wi)=>{
+      const key=`${mi}_${wi}`;
+      const row=document.createElement('div');row.className='wrow';row.id='wrow-'+key;
+      const txt=document.createElement('div');txt.className='wtxt';txt.textContent=w.tekst;
+      const sel=document.createElement('select');sel.className='wsel';
+      sel.innerHTML='<option value="">— antwoord —</option>'+w.opts.map(o=>`<option value="${o}">${o}</option>`).join('');
+      sel.value=l1st.sels[key]||'';
+      sel.onchange=()=>{l1st.sels[key]=sel.value;};
+      row.appendChild(txt);row.appendChild(sel);c.appendChild(row);
+    });
+  });
 }
 
-// ── Auto-tests ─────────────────────────────────────────────
-function runAutoTests() {
-  TESTS.forEach(t => {
-    if (t.auto && !results[t.id]) {
-      try {
-        const ok = t.auto();
-        setResult(t.id, ok ? 'pass' : 'fail');
-      } catch(e) {
-        setResult(t.id, 'fail');
+function checkL1(){
+  let wrong=0,empty=0;
+  L1_DATA.forEach((moni,mi)=>{
+    moni.weetjes.forEach((w,wi)=>{
+      const key=`${mi}_${wi}`;const val=(l1st.sels[key]||'').toLowerCase().trim();
+      const row=document.getElementById('wrow-'+key);
+      if(!val){empty++;row.className='wrow';return;}
+      if(val===w.correct.toLowerCase()){row.className='wrow correct';}
+      else{row.className='wrow wrong';wrong++;}
+    });
+  });
+  if(empty>0){log('log1','[!] Vul alle antwoorden in.','w');shake('panel-l1');return;}
+  if(wrong>0){log('log1',`[✗] ${wrong} antwoord(en) incorrect. Probeer opnieuw.`,'e');shake('panel-l1');return;}
+  log('log1','[✓] ALLE WEETJES CORRECT GEKOPPELD! Locatie 2 vrijgespeeld.','o');
+  modal('LOCATIE 2 VRIJ ✓','Alle weetjes correct!\nNavigeer naar Locatie 2.','success').then(()=>openTab('l2'));
+}
+
+function resetL1(){
+  l1st.names=['','','','',''];l1st.sels={};buildL1();
+  document.querySelectorAll('.wrow').forEach(r=>r.className='wrow');
+  log('log1','>> Reset.','');
+}
+
+// Helper to get moni display name (with real name if filled in)
+function moniName(idx){
+  const real=l1st.names[idx]||'';
+  return real?`Moni ${idx+1} (${real})`:`Moni ${idx+1}`;
+}
+
+// ══════════════════════════════════════════════════════════
+// LOCATIE 2 — GRID
+// ══════════════════════════════════════════════════════════
+const gst={sel:{},ant:{},vrij:{},actief:null,monisel:{}};
+
+function buildGrid(){
+  const tbl=document.getElementById('gtbl');tbl.innerHTML='';
+  const hr=document.createElement('tr');hr.innerHTML='<th class="ghdr"></th>';
+  for(let k=0;k<GRID[0].length;k++)hr.innerHTML+=`<th class="ghdr">${k+1}</th>`;
+  tbl.appendChild(hr);
+  GRID.forEach((rij,r)=>{
+    const tr=document.createElement('tr');tr.innerHTML=`<td class="ghdr">${r+1}</td>`;
+    rij.forEach((w,k)=>{
+      const td=document.createElement('td');td.className='gcell';td.id=`g${r}_${k}`;td.textContent=w;
+      td.onclick=()=>onGClick(r,k);tr.appendChild(td);
+    });tbl.appendChild(tr);
+  });
+}
+
+function onGClick(r,k){
+  if(gst.actief===null){log('log2','[!] Speel eerst een opdracht vrij.','w');return;}
+  const v=L2_VRAGEN[gst.actief];if(v.type!=='grid')return;
+  const woord=GRID[r][k];
+  // Clear previous selection for this question
+  Object.keys(gst.sel).filter(key=>key.startsWith('q'+gst.actief+'_')).forEach(key=>{delete gst.sel[key];});
+  gst.sel[`q${gst.actief}_${r}_${k}`]=true;
+  gst.ant[gst.actief]={woord,r,k};
+  const ok=woord.toUpperCase()===v.antwoord.toUpperCase();
+  log('log2',`[${ok?'✓':'~'}] '${woord}' geselecteerd voor weetje ${gst.actief+1}.`,ok?'o':'w');
+  if(ok){updVSt(gst.actief,`✓ ${woord} (${r+1},${k+1})`, 'ok');}
+  else{updVSt(gst.actief,`? ${woord} — probeer opnieuw`,'pend');}
+  gst.actief=null;refreshGrid();refreshCode();
+}
+
+function refreshGrid(){
+  GRID.forEach((rij,r)=>rij.forEach((w,k)=>{
+    const c=document.getElementById(`g${r}_${k}`);if(!c)return;
+    c.className='gcell';
+    // Check if this cell is a confirmed correct answer
+    const isOk=Object.values(gst.ant).some(a=>a&&a.r===r&&a.k===k&&GRID[r][k].toUpperCase()===L2_VRAGEN[Object.keys(gst.ant).find(i=>gst.ant[i]&&gst.ant[i].r===r&&gst.ant[i].k===k)].antwoord?.toUpperCase());
+    // Simpler: check each question's answer
+    let confirmed=false;
+    L2_VRAGEN.forEach((v,qi)=>{if(v.type==='grid'&&gst.ant[qi]&&gst.ant[qi].r===r&&gst.ant[qi].k===k&&GRID[r][k].toUpperCase()===v.antwoord.toUpperCase())confirmed=true;});
+    let selected=Object.keys(gst.sel).some(key=>key===`q${gst.actief}_${r}_${k}`);
+    if(confirmed)c.classList.add('ok');
+    else if(Object.keys(gst.sel).some(key=>key.endsWith(`_${r}_${k}`)))c.classList.add('sel');
+    if(gst.actief===null)c.classList.add('inactive');
+  }));
+}
+
+// ══════════════════════════════════════════════════════════
+// LOCATIE 2 — VRAGEN
+// ══════════════════════════════════════════════════════════
+function buildL2(){
+  const c=document.getElementById('l2-container');c.innerHTML='';
+  L2_VRAGEN.forEach((v,i)=>{
+    const card=document.createElement('div');card.className='vcard'+(gst.vrij[i]?' open':'');card.id='vc'+i;
+    const ol=document.createElement('div');ol.className='vlabel';ol.textContent=v.opdracht;
+    const vt=document.createElement('div');vt.className='vtxt'+(gst.vrij[i]?'':' locked');
+    vt.textContent=gst.vrij[i]?`Weetje: ${v.tekst}`:'Weetje: [🔒 GEBLOKKEERD]';
+    const st=document.createElement('div');st.className='vst';st.id='vst'+i;
+    st.textContent=gst.vrij[i]?'⏳ Wacht op antwoord...':'🔒 Geblokkeerd';
+    const cb=document.createElement('div');cb.className='cbtns';
+    const vb=document.createElement('button');vb.className='btn '+(gst.vrij[i]?'btl':'bts');
+    vb.textContent=`🔓 Opdracht ${i+1} vrijspelen`;vb.disabled=!!gst.vrij[i];vb.onclick=()=>vrijspeel(i);
+    cb.appendChild(vb);
+
+    if(gst.vrij[i]){
+      if(v.type==='grid'){
+        const sb=document.createElement('button');sb.className='btn bts';sb.textContent='📌 Selecteer in grid';
+        sb.onclick=()=>activeerGrid(i);cb.appendChild(sb);
+      } else {
+        // Moni selection checkboxes
+        const mg=document.createElement('div');mg.className='moni-check-group';mg.id='mg'+i;
+        MONIS.forEach((m,mi)=>{
+          const ch=document.createElement('div');ch.className='moni-check'+(( gst.monisel[i]||[]).includes(mi)?' selected':'');
+          const realName=l1st.names[mi];
+          ch.textContent=(realName?`${m} — ${realName}`:m);
+          ch.onclick=()=>toggleMoniSel(i,mi,ch);mg.appendChild(ch);
+        });
+        cb.appendChild(mg);
+        const conf=document.createElement('button');conf.className='btn bts';conf.textContent='✔ Bevestig selectie';
+        conf.onclick=()=>confirmMoniSel(i);cb.appendChild(conf);
       }
     }
+
+    card.appendChild(ol);card.appendChild(vt);card.appendChild(cb);card.appendChild(st);c.appendChild(card);
   });
 }
 
-// ── Summary ────────────────────────────────────────────────
-function updateSummary() {
-  const vals = Object.values(results);
-  const pass = vals.filter(v => v === 'pass').length;
-  const fail = vals.filter(v => v === 'fail').length;
-  const skip = vals.filter(v => v === 'skip').length;
-  const total = TESTS.length;
-  const done = vals.length;
+function toggleMoniSel(qi,mi,el){
+  if(!gst.monisel[qi])gst.monisel[qi]=[];
+  const idx=gst.monisel[qi].indexOf(mi);
+  if(idx>=0){gst.monisel[qi].splice(idx,1);el.classList.remove('selected');}
+  else{gst.monisel[qi].push(mi);el.classList.add('selected');}
+}
 
-  document.getElementById('count-pass').textContent = pass;
-  document.getElementById('count-fail').textContent = fail;
-  document.getElementById('count-skip').textContent = skip;
+function confirmMoniSel(qi){
+  const sel=gst.monisel[qi]||[];
+  const v=L2_VRAGEN[qi];
+  if(sel.length===0){log('log2','[!] Selecteer minstens één moni.','w');return;}
+  // Check against correct answer
+  const correct=v.moniIdxs.slice().sort().join(',');
+  const chosen=sel.slice().sort((a,b)=>a-b).join(',');
+  const ok=correct===chosen;
+  const names=sel.sort((a,b)=>a-b).map(i=>moniName(i)).join(' + ');
+  gst.ant[qi]={monis:sel};
+  log('log2',`[${ok?'✓':'~'}] Weetje ${qi+1}: ${names}`,ok?'o':'w');
+  updVSt(qi,`${ok?'✓':'?'} ${names}`,ok?'ok':'pend');
+  refreshCode();
+}
 
-  const pct = Math.round((done / total) * 100);
-  document.getElementById('progress-fill').style.width = pct + '%';
-  document.getElementById('progress-label').textContent = `${done} / ${total} getest`;
+async function vrijspeel(i){
+  const v=L2_VRAGEN[i];
+  // Step 1: show only the opdracht, not the weetje yet
+  const ok=await modal(`OPDRACHT ${i+1}`,`${v.opdracht}\n\nHeeft iedereen de opdracht uitgevoerd?`,'info',[{l:'JA, UITGEVOERD',v:true,p:true},{l:'Wacht nog',v:false,p:false}]);
+  if(!ok)return;
+  // Step 2: now reveal the weetje
+  gst.vrij[i]=true;
+  log('log2',`[✓] Opdracht ${i+1} vrijgespeeld!`,'o');
+  buildL2();
+  // Show weetje in a second popup
+  await modal(`WEETJE ${i+1} ONTGRENDELD`,`${v.tekst}`,'success',[{l:'BEGREPEN!',v:true,p:true}]);
+}
 
-  const summary = document.getElementById('summary');
-  const title = document.getElementById('summary-title');
-  const msg = document.getElementById('final-msg');
+function activeerGrid(i){
+  if(!gst.vrij[i])return;
+  gst.actief=i;refreshGrid();
+  log('log2',`>> Grid actief voor weetje ${i+1} — klik het juiste woord.`,'i');
+  document.querySelector('.gwrap').scrollIntoView({behavior:'smooth',block:'center'});
+}
 
-  if (done < total) {
-    summary.className = 'summary';
-    title.style.color = '#4a6a4a';
-    title.textContent = 'RESULTATEN';
-    msg.className = 'final-msg';
-    msg.textContent = 'Voer de tests uit door op de knoppen te drukken.';
-  } else if (fail === 0) {
-    summary.className = 'summary all-pass';
-    title.style.color = '#00ff41';
-    title.textContent = '✓ ALLES GESLAAGD!';
-    title.classList.add('pulse');
-    msg.className = 'final-msg ok';
-    msg.textContent = 'De app werkt correct op dit apparaat.\nStuur een screenshot van dit scherm naar Brent. 📸';
-  } else {
-    summary.className = 'summary has-fail';
-    title.style.color = '#ff3333';
-    title.textContent = `⚠ ${fail} TEST${fail > 1 ? 'S' : ''} GEFAALD`;
-    title.classList.remove('pulse');
-    msg.className = 'final-msg';
-    msg.textContent = `${fail} test(s) gefaald. Stuur een screenshot naar Brent met wat er misging.`;
+function updVSt(i,t,cls){
+  const el=document.getElementById('vst'+i);if(el){el.textContent=t;el.className='vst '+cls;}
+  const card=document.getElementById('vc'+i);if(card&&cls==='ok')card.classList.add('done');
+}
+
+// ══════════════════════════════════════════════════════════
+// LOCATIE 2 — CODE
+// ══════════════════════════════════════════════════════════
+function buildCode(){
+  const d=document.getElementById('codedis');d.innerHTML='';
+  for(let i=0;i<10;i++){
+    if(i>0&&i%2===0){const s=document.createElement('div');s.className='csep';d.appendChild(s);}
+    const el=document.createElement('div');el.className='cdig';el.id='cd'+i;el.textContent='?';d.appendChild(el);
   }
 }
 
-// ── Test popup ─────────────────────────────────────────────
-function showTestModal() {
-  const overlay = document.createElement('div');
-  overlay.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.85);display:flex;align-items:center;justify-content:center;z-index:1000;padding:20px;backdrop-filter:blur(4px);';
-
-  overlay.innerHTML = `
-    <div style="background:#141418;border:2px solid #00ff41;border-radius:8px;padding:24px;max-width:380px;width:100%;box-shadow:0 0 40px rgba(0,255,65,0.2);">
-      <div style="font-family:'Orbitron',monospace;font-size:15px;font-weight:700;color:#00ff41;margin-bottom:10px;">✓ POPUP WERKT!</div>
-      <div style="font-size:13px;color:#aaa;margin-bottom:20px;line-height:1.6;">Als je dit venster ziet, werken de popups correct op jouw apparaat.</div>
-      <button onclick="this.closest('.modal-test-overlay').remove()" style="background:#00ff41;color:#000;font-family:inherit;font-size:13px;font-weight:bold;padding:10px 20px;border:none;border-radius:4px;cursor:pointer;width:100%;">SLUITEN</button>
-    </div>`;
-  overlay.className = 'modal-test-overlay';
-  overlay.onclick = e => { if(e.target === overlay) overlay.remove(); };
-  document.body.appendChild(overlay);
+function getCodeDigits(){
+  let code='';
+  L2_VRAGEN.forEach((v,i)=>{
+    const a=gst.ant[i];
+    if(v.type==='grid'){
+      if(a&&a.woord&&a.woord.toUpperCase()===v.antwoord.toUpperCase()){code+=v.codeContrib();}
+      else code+='??';
+    } else {
+      const sel=a?a.monis:[];
+      if(sel.length===2){const contrib=v.codeContrib(sel);code+=contrib.length===2?contrib:'??';}
+      else code+='??';
+    }
+  });
+  return code;
 }
 
-// ── Init ───────────────────────────────────────────────────
-renderAll();
-setTimeout(runAutoTests, 300);
+function refreshCode(){
+  const code=getCodeDigits();let filled=0;
+  for(let i=0;i<10;i++){const el=document.getElementById('cd'+i);if(!el)continue;el.textContent=code[i];el.className='cdig'+(code[i]!=='?'?' on':'');if(code[i]!=='?')filled++;}
+  const s=document.getElementById('cst');
+  const cnt=Math.floor(filled/2);
+  if(cnt===5){s.textContent=`✓ Alle weetjes ingevuld! Code: ${code}`;s.className='cst done';}
+  else{s.textContent=`${cnt} / 5 weetjes ingevuld`;s.className='cst';}
+}
+
+async function revealCode(){
+  const code=getCodeDigits();
+  if(code.includes('?')){log('log2','[!] Vul eerst alle weetjes in.','w');shake('panel-l2');await modal('ONVOLLEDIG',`Vul alle 5 weetjes in.\nCode: ${code}`,'danger');return;}
+  log('log2',`[✓] CODE: ${code} — Locatie 3 vrijgespeeld!`,'o');
+  await modal('LOCATIE 3 VRIJ ✓',`De code is: ${code}\n\nDeze code onthult de finale locatie!\nNavigeer naar Locatie 3.`,'success');
+  openTab('l3');
+}
+
+// ══════════════════════════════════════════════════════════
+// LOCATIE 3 — DRADEN
+// ══════════════════════════════════════════════════════════
+const drSt={geknipt:new Set()};
+
+function buildDraden(){
+  const c=document.getElementById('draadjes');c.innerHTML='';
+  DRADEN.forEach((d,i)=>{
+    const item=document.createElement('div');item.className='ditem';item.id='ditem'+i;
+    const lijn=document.createElement('div');lijn.className='dlijn';lijn.style.background=d.hex;lijn.style.boxShadow=`0 0 10px ${d.hex}55`;
+    const lbl=document.createElement('div');lbl.className='dlbl';lbl.style.color=d.hex;lbl.textContent=d.kleur;
+    const naam=document.createElement('div');naam.style.cssText=`font-size:10px;color:var(--mu);text-align:center;max-width:80px;`;naam.textContent=d.naam;
+    const btn=document.createElement('button');btn.className='dbtn';btn.id='dbtn'+i;
+    btn.style.color=d.hex;btn.style.borderColor=d.hex;btn.textContent='✂ KNIPPEN';
+    btn.onclick=()=>knipDraad(i);
+    item.appendChild(lijn);item.appendChild(lbl);item.appendChild(naam);item.appendChild(btn);
+    c.appendChild(item);
+  });
+}
+
+async function knipDraad(i){
+  if(drSt.geknipt.has(i)){log('log3',`[!] Dit draadje is al doorgeknipt.`,'w');return;}
+  const d=DRADEN[i];
+  // Show the weetje clue
+  const ok=await modal(
+    `✂ ${d.naam}`,
+    `${d.weetje}\n\nIs de juiste persoon aangeduid?`,
+    'info',
+    [{l:'JA, DOORKNIPPEN!',v:true,p:true},{l:'Wacht nog',v:false,p:false}]
+  );
+  if(!ok)return;
+  drSt.geknipt.add(i);
+  const btn=document.getElementById('dbtn'+i);
+  if(btn){btn.classList.add('cut');btn.textContent='✂ GEKNIPT';btn.disabled=true;}
+  const lijn=document.querySelector(`#ditem${i} .dlijn`);
+  if(lijn){lijn.classList.add('cut');lijn.style.opacity='.4';}
+  log('log3',`[✓] ${d.kleur} draadje (${d.naam}) doorgeknipt!`,'o');
+  if(drSt.geknipt.size===DRADEN.length){
+    log('log3','[✓] Alle 4 draden doorgeknipt! Klik BOM ONTMANTELD.','o');
+    const ob=document.getElementById('ontbtn');if(ob){ob.disabled=false;ob.style.opacity='1';}
+  }
+}
+
+async function ontmantelBom(){
+  if(drSt.geknipt.size<DRADEN.length){await modal('NIET ALLE DRADEN','Knip eerst alle 4 draden door!','danger');return;}
+  // Start 10s countdown with beeping
+  startBomCountdown();
+  startCountdown();
+}
+
+function startBomCountdown(){
+  const panel=document.getElementById('bompanel');
+  // Create countdown overlay inside panel
+  const overlay=document.createElement('div');
+  overlay.id='countdown-overlay';
+  overlay.style.cssText='position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;background:rgba(0,0,0,.85);border-radius:8px;z-index:10;';
+  const numEl=document.createElement('div');
+  numEl.style.cssText='font-family:var(--fd);font-size:80px;font-weight:900;color:#ff3333;text-shadow:0 0 40px #ff3333;';
+  numEl.id='countdown-num';
+  const lbl=document.createElement('div');
+  lbl.style.cssText='font-family:var(--fd);font-size:12px;letter-spacing:4px;color:var(--am);margin-top:8px;';
+  lbl.textContent='BOM TIKT...';
+  overlay.appendChild(numEl);overlay.appendChild(lbl);
+  panel.style.position='relative';panel.appendChild(overlay);
+
+  let t=20;
+  const AudioCtx=window.AudioContext||window.webkitAudioContext;
+  let actx=null;try{actx=new AudioCtx();}catch(e){}
+
+  function beep(freq,dur){
+    if(!actx)return;
+    const osc=actx.createOscillator();const gain=actx.createGain();
+    osc.connect(gain);gain.connect(actx.destination);
+    osc.frequency.value=freq;osc.type='square';
+    gain.gain.setValueAtTime(.3,actx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001,actx.currentTime+dur);
+    osc.start();osc.stop(actx.currentTime+dur);
+  }
+
+  function tick(){
+    numEl.textContent=t;
+    // Shake the page
+    document.getElementById('panel-l3').classList.add('shake');
+    setTimeout(()=>document.getElementById('panel-l3').classList.remove('shake'),400);
+    // Beep - faster and higher pitched as countdown goes down
+    const freq=t>5?800:1200;
+    beep(freq,.15);
+    if(t<=0){
+      // Boom!
+      overlay.remove();
+      // Big alarm sound
+      for(let i=0;i<5;i++){setTimeout(()=>beep(400,.3),i*200);}
+      panel.style.borderColor='var(--g)';
+      document.getElementById('final-q').style.display='block';
+      document.getElementById('final-q').scrollIntoView({behavior:'smooth',block:'center'});
+      log('log3','[✓] BOM ONTMANTELD! Beantwoord de finale vraag.','o');
+      return;
+    }
+    t--;
+    const delay=t<3?600:1000;
+    setTimeout(tick,delay);
+  }
+  tick();
+}
+
+function checkFinalQ(){
+  const v=document.getElementById('fq-input').value;
+  document.getElementById('fq-submit').disabled=v===''||isNaN(parseInt(v));
+}
+
+async function submitFinalQ(){
+  const v=parseInt(document.getElementById('fq-input').value);
+  if(isNaN(v))return;
+  if(v===CORRECT_TOTAL_BROERS){
+    log('log3','[✓] CORRECT! MISSIE VOLBRACHT!','o');
+    document.body.classList.add('flash-g');setTimeout(()=>document.body.classList.remove('flash-g'),2000);
+    await modal('🎉 MISSIE GESLAAGD!',`Correct! Het totaal is ${v}.\n\nOperation Hasselt is voltooid!\nDe kennismaking is geslaagd!`,'success');
+    openTab('fin');
+  } else {
+    log('log3',`[✗] Fout! Probeer opnieuw.`,'e');
+    shake('final-q');
+    document.body.classList.add('flash-r');setTimeout(()=>document.body.classList.remove('flash-r'),1500);
+    await modal('FOUT ANTWOORD',`${v} is niet correct.\nTel alle broers en zussen nog eens.`,'danger');
+  }
+}
+
+let countdownTimer;
+let timeLeft = 20;
+
+function startCountdown(){
+  timeLeft = 20;
+  const el = document.getElementById('countdown');
+  el.textContent = "⏳ Tijd: " + timeLeft + "s";
+
+  countdownTimer = setInterval(()=>{
+    timeLeft--;
+    el.textContent = "⏳ Tijd: " + timeLeft + "s";
+
+    if(timeLeft <= 0){
+      clearInterval(countdownTimer);
+      el.textContent = "⏳ TIJD OM!";
+      
+      // Optioneel: automatisch fout
+      document.getElementById('fq-submit').disabled = true;
+      log3.innerHTML += '<span class="e">>> Tijd verstreken! Probeer opnieuw.</span><br>';
+    }
+  },1000);
+}
+  
 </script>
 </body>
 </html>
+
