@@ -273,9 +273,6 @@ header h1{font-family:var(--fd);font-size:clamp(12px,3vw,17px);font-weight:900;l
       </div>
     </div>
     <div id="final-q">
-      <div id="countdown" style="color:var(--r);font-weight:bold;margin-bottom:10px;">
-        ⏳ Tijd: 20s
-      </div>
       <div class="fq-title">🔐 FINALE VERIFICATIE</div>
       <div class="fq-sub">Tel het totale aantal broers en zussen van alle moni's bij elkaar op.<br>
       Voer het getal in om de missie te voltooien.</div>
@@ -337,9 +334,9 @@ const L1_DATA = [
       {tekst:'Hawaï pizza = echte pizza?',                opts:['ja, absoluut','nee, nooit'],                         correct:'ja, absoluut'},
     ]
   },
-  { // Moni 4: 1 broers/zussen, zingend praten, gemakkelijk opstaan
+  { // Moni 4: 5 broers/zussen, zingend praten, gemakkelijk opstaan
     weetjes:[
-      {tekst:'Aantal broers/zussen',                      opts:['0','1','2','3','4'],                                 correct:'1'},
+      {tekst:'Aantal broers/zussen',                      opts:['3','4','5','6','7'],                                 correct:'5'},
       {tekst:'Liever zingend praten of dansend bewegen?', opts:['zingend praten','dansend bewegen'],                  correct:'zingend praten'},
       {tekst:'Verborgen talent',                          opts:['gemakkelijk opstaan','snel rekenen','foutloos spellen','navigeren op gevoel'], correct:'gemakkelijk opstaan'},
     ]
@@ -386,7 +383,7 @@ const L2_VRAGEN = [
   },
   {
     opdracht:'Opdracht 3 — Doe haasje over een bepaalde afstand',
-    tekst:'Wat is het verborgen talent van 2 moni's?',
+    tekst:'Wat is het verborgen talent? → salto op de grond',
     type:'grid',
     antwoord:'SALTO', rij:3, kolom:5,
     hint:'Moni 1 & 5 hebben een salto als verborgen talent',
@@ -394,7 +391,7 @@ const L2_VRAGEN = [
   },
   {
     opdracht:'Opdracht 4 — Vind iets in je lievelingskleur',
-    tekst:'Wat is de lievelingskleur van 2 moni's',
+    tekst:'Wat is de lievelingskleur? → blauw',
     type:'grid',
     antwoord:'BLAUW', rij:4, kolom:2,
     hint:'Moni 2 & 4 hebben blauw als lievelingskleur',
@@ -452,6 +449,8 @@ const BRIEF=[
   {t:'Jij bent de CONTROLETOREN van Operation Hasselt.'},{t:'Terwijl de spionnen op het terrein opereren,'},{t:'begeleid jij hen op afstand via telefoon.'},{t:''},
   {t:'Je taak bestaat uit drie fases:',dot:true},{t:''},
   {t:'FASE 1 — PARKING JAPANSE TUIN:'},{t:'Spionnen bellen jou en vertellen een weetje.'},{t:'Koppel elk weetje aan de juiste moni.'},{t:''},
+  {t:'FASE 2 — KAPERMOLENPARK:'},{t:'Speel opdrachten vrij. Antwoorden verschijnen in het grid.'},{t:'Samen vormen ze de geheime code.'},{ t:''},
+  {t:'FASE 3 — VOLG HOOFDSPION:'},{t:'Begeleid de ontmanteling van de bom.'},{t:'Lees de weetjes voor — de juiste persoon knipt.'},{ t:''},
   {t:'Succes, Agent. De missie begint nu.',dot:true}
 ];
 
@@ -810,7 +809,7 @@ async function knipDraad(i){
 async function ontmantelBom(){
   if(drSt.geknipt.size<DRADEN.length){await modal('NIET ALLE DRADEN','Knip eerst alle 4 draden door!','danger');return;}
   // Start 10s countdown with beeping
-  startCountdown();
+  startBomCountdown();
 }
 
 function startBomCountdown(){
@@ -828,7 +827,7 @@ function startBomCountdown(){
   overlay.appendChild(numEl);overlay.appendChild(lbl);
   panel.style.position='relative';panel.appendChild(overlay);
 
-  let t=20;
+  let t=10;
   const AudioCtx=window.AudioContext||window.webkitAudioContext;
   let actx=null;try{actx=new AudioCtx();}catch(e){}
 
@@ -888,31 +887,6 @@ async function submitFinalQ(){
     await modal('FOUT ANTWOORD',`${v} is niet correct.\nTel alle broers en zussen nog eens.`,'danger');
   }
 }
-
-let countdownTimer;
-let timeLeft = 20;
-
-function startCountdown(){
-  timeLeft = 20;
-  const el = document.getElementById('countdown');
-  el.textContent = "⏳ Tijd: " + timeLeft + "s";
-
-  countdownTimer = setInterval(()=>{
-    timeLeft--;
-    el.textContent = "⏳ Tijd: " + timeLeft + "s";
-
-    if(timeLeft <= 0){
-      clearInterval(countdownTimer);
-      el.textContent = "⏳ TIJD OM!";
-      
-      // Optioneel: automatisch fout
-      document.getElementById('fq-submit').disabled = true;
-      log3.innerHTML += '<span class="e">>> Tijd verstreken! Probeer opnieuw.</span><br>';
-    }
-  },1000);
-}
-  
 </script>
 </body>
 </html>
-
